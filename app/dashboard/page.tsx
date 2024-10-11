@@ -1,13 +1,10 @@
-import { Button } from '@/components/ui/button'
-import React from 'react'
+import React from 'react';
 
-function Dashboard() {
+const DashboardPage = () => {
   return (
-    <div>
-        <div>Dashboard</div>
-        <Button>Button</Button>
-    </div>
-  )
-}
-
-export default Dashboard
+    <main className="p-8">
+        Dashboard
+    </main>
+  );
+};
+export default DashboardPage;
