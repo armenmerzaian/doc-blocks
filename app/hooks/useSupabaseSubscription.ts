@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { createSupabaseClientCsr } from "@/app/lib/database/createSupabaseClientCsr";
+import { useCreateSupabaseClientCsr } from "@/app/lib/database/createSupabaseClientCsr";
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 type PostgresChanges = {
@@ -15,7 +15,7 @@ interface EventHandlers {
 }
 
 export function useSupabaseSubscription(table: string) {
-  const supabaseClient = createSupabaseClientCsr();
+  const supabaseClient = useCreateSupabaseClientCsr();
 
   const subscribeToChanges = useCallback((handlers: EventHandlers) => {
     const channel = supabaseClient
