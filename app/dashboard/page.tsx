@@ -1,31 +1,16 @@
-import React from 'react';
-import { createClerkSupabaseClientSsr } from "../client";
-import { PostgrestError } from '@supabase/supabase-js';
-import AddTaskForm from './components/AddTaskForm';
+import React from "react";
+import AddItemForm from "./components/AddItemForm";
+import { ListItems } from "./components/ListItems";
+import { ListItemTwo } from "./components/ListItemsTwo";
 
-const DashboardPage = async () => {
-
-    const client = createClerkSupabaseClientSsr();
-
-    const { data, error }: { data: any, error: PostgrestError | null} = await client.from("item").select();
-    if (error) {
-      throw error;
-    }
-    const itemsList: any = data;
-
+const DashboardPage = () => {
   return (
     <main className="p-8">
       Dashboard
-      
-      
-      <div>
-        {itemsList?.map((item: any, key: any) => (
-          <p id={key}>{item.name}</p>
-        ))}
-      </div>
-
-       <AddTaskForm />
+      <ListItems />
+      <AddItemForm />
     </main>
   );
 };
+
 export default DashboardPage;

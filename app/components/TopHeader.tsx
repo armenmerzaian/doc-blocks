@@ -10,7 +10,7 @@ const TopHeader: React.FC = async () => {
 
 
   return (
-    <header className="w-full px-4 h-20 bg-white rounded-b-md drop-shadow-lg">
+    <header className="w-full px-4 h-20 bg-white rounded-b-md shadow">
       <div className="flex items-center justify-between h-full px-4 py-2">
         
         <NavMenuButton />
