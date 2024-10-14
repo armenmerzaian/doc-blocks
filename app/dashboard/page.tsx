@@ -1,14 +1,20 @@
 import React from "react";
 import AddItemForm from "./components/AddItemForm";
 import { ListItems } from "./components/ListItems";
+import { EditItemForm } from "./components/EditItemForm";
+import { NAV_BAR_HEIGHT } from "../lib/constants/constants";
 
 const DashboardPage = () => {
 
   return (
-    <main className="p-8">
-      Dashboard
-      <ListItems />
-      <AddItemForm />
+    <main className="p-8 flex justify-center items-start outline" style={{height: `calc(100vh - ${NAV_BAR_HEIGHT})`}}>
+      <div id="widgets" className="w-full max-w-[1200px] lg:flex gap-4 items-start justify-center outline outline-red-500">
+        <ListItems />
+        <div className="space-y-4">
+          <AddItemForm />
+          <EditItemForm />
+        </div>
+      </div>
     </main>
   );
 };

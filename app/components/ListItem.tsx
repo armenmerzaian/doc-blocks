@@ -1,5 +1,7 @@
+import { cn } from '@/lib/utils';
 import React, { ReactNode } from 'react';
-import EventEmitter from "reactjs-eventemitter";
+import Emitter from "@/app/lib/emitter";
+import { HiXCircle } from "react-icons/hi";
 
 interface ListItemProps {
   id: string;
@@ -16,14 +18,23 @@ const ListItem: React.FC<ListItemProps> = ({
   children,
 }) => {
   
-  const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    EventEmitter.emit("buttonClick", {eventData: event, elemId: id});
+  const handleDeleteButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    Emitter.emit("deleteClick", {eventData: event, elemId: id});
+  };
+
+  const handleSelectButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    console.log("select button clicked");
+    Emitter.emit("selectClick", {eventData: event, elemId: id});
   };
 
   return (
-    <div id={id} className={className}>
-      {children ? children : <p>{label}</p>}
-      <button onClick={handleButtonClick}>X</button>
+    <div className={cn("flex items-center justify-between", className)}>
+      <button id={id} className="flex-grow text-left" onClick={handleSelectButtonClick}>
+        {children ? children : <p>{label}</p>}
+      </button>
+      <button onClick={handleDeleteButtonClick} className="flex-grow-0">
+        <HiXCircle className="w-6 h-6" />
+      </button>
     </div>
   );
 };

@@ -10,7 +10,7 @@ import { UserResource } from "@clerk/types";
 import { useSupabaseSubscription } from "@/app/hooks/useSupabaseSubscription";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import ListItem from "@/app/components/ListItem";
-import EventEmitter from "reactjs-eventemitter";
+import Emitter from "@/app/lib/emitter";
 
 export const ListItems: React.FC = () => {
   const { user } = useUser() as { user: UserResource };
@@ -20,8 +20,8 @@ export const ListItems: React.FC = () => {
   useEffect(() => {
     if (!user) return;
 
-    EventEmitter.subscribe(
-      "buttonClick",
+    Emitter.on(
+      "deleteClick",
       ({
         eventData,
         elemId,
@@ -29,7 +29,8 @@ export const ListItems: React.FC = () => {
         eventData: React.MouseEvent<HTMLButtonElement>;
         elemId: string;
       }) => {
-        alert("Clicked" + elemId);
+        console.log("delete click received", elemId);
+        console.log(eventData);
         deleteItem(elemId);
       }
     );
@@ -40,13 +41,13 @@ export const ListItems: React.FC = () => {
         setItems((prevItems) => prevItems.filter((item) => item.id !== id));
       } catch (error) {
         console.error("Error deleting item:", error);
+        throw new Error("Error deleting item.")
       }
     };
 
     const fetchItems = async () => {
       try {
         const fetchedItems = await getAllRowsFromDB("item");
-        console.log("Fetched items: ", fetchedItems);
         setItems(
           fetchedItems.map((item) => {
             return {
@@ -55,9 +56,9 @@ export const ListItems: React.FC = () => {
             };
           })
         );
-        console.log("Items: ", items);
       } catch (error) {
         console.error("Error fetching items:", error);
+        throw new Error("Error deleting item.")
       }
     };
 
@@ -67,14 +68,14 @@ export const ListItems: React.FC = () => {
       onInsert: (
         payload: RealtimePostgresChangesPayload<{ [key: string]: any }>
       ) => {
-        console.log("Insert Payload: ", payload);
+        console.info("Insert Payload: ", payload);
         //@ts-expect-error Type is not fully defined in the payload
         setItems((prevItems) => [...prevItems, {id: payload.new.id, label: payload.new.name}]);
       },
       onUpdate: (
         payload: RealtimePostgresChangesPayload<{ [key: string]: any }>
       ) => {
-        console.log("Update Payload: ", payload);
+        console.info("Update Payload: ", payload);
         setItems((prevItems) =>
           prevItems.map((item) =>
             //@ts-expect-error Type is not fully defined in the payload
@@ -85,7 +86,7 @@ export const ListItems: React.FC = () => {
       onDelete: (
         payload: RealtimePostgresChangesPayload<{ [key: string]: any }>
       ) => {
-        console.log("Delete Payload: ", payload);
+        console.info("Delete Payload: ", payload);
         setItems((prevItems) =>
           //@ts-expect-error Type is not fully defined in the payload
           prevItems.filter((item) => item !== payload.old.name)
@@ -93,10 +94,11 @@ export const ListItems: React.FC = () => {
       },
     };
 
-    const unsubscribe = subscribeToChanges(handlers);
+    const unsubscribeRealtime = subscribeToChanges(handlers);
 
     return () => {
-      unsubscribe();
+      unsubscribeRealtime();
+      Emitter.off("deleteClick", ()=>{});
     };
   }, [user, subscribeToChanges]);
 
@@ -105,7 +107,7 @@ export const ListItems: React.FC = () => {
   }
 
   return (
-    <ScrollArea className="h-[200px] w-full md:max-w-[400px] rounded-md border p-4">
+    <ScrollArea className="h-[500px] w-full max-w-[400px] border rounded-md shadow p-4">
       <div className="p-4">
         {items.map(({ id, label }: { id: string; label: string }) => (
           <div key={id}>

@@ -11,7 +11,7 @@ export async function addRowToDB(name: string, table: string) {
 
   if (response.error) throw response.error;
 
-  console.log("Item successfully added!", response.data);
+  console.info("Item successfully added!", response.data);
   return response.data;
 }
 
@@ -20,8 +20,17 @@ export async function getAllRowsFromDB(table: string){
 
   if (response.error) throw response.error;
 
-  console.log("Retrieved items: ", response.data)
+  console.info("Retrieved items: ", response.data)
   return response.data;
+}
+
+export async function getRowFromDB(id: string, table: string){
+  const response = await client.from(table).select().eq("id", id);
+
+  if (response.error) throw response.error;
+
+  console.info("Retrieved item: ", response.data);
+  return response.data[0];
 }
 
 
@@ -30,7 +39,7 @@ export async function deleteRowFromDB(id: string, table: string) {
 
   if (response.error) throw response.error;
 
-  console.log("Item successfully deleted!", response.data);
+  console.info("Item successfully deleted!", response.data);
   return response.data;
 }
 
@@ -39,6 +48,6 @@ export async function updateRowInDB(id: string, name: string, table: string) {
 
   if (response.error) throw response.error;
 
-  console.log("Item successfully updated!", response.data);
+  console.info("Item successfully updated!", response.data);
   return response.data;
 }

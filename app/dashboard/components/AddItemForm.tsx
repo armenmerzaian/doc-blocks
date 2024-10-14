@@ -39,18 +39,18 @@ function AddItemForm() {
   }
 
   return (
-    <div className="w-fit mx-auto space-y-4">
+    <div className="w-fit mx-auto md:mx-0 space-y-4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 p-5 w-full md:max-w-[400px] border rounded-md shadow"
+          className="space-y-8 p-5 w-full max-w-[400px] border rounded-md shadow"
         >
           <FormField
             control={form.control}
             name="itemName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Input Field</FormLabel>
+                <FormLabel>Create Field</FormLabel>
                 <FormControl>
                   <Input placeholder="Write something to save" {...field} />
                 </FormControl>

@@ -19,7 +19,6 @@ export function createClerkSupabaseClientSsr() {
 
           const headers = new Headers(options?.headers);
           headers.set("Authorization", `Bearer ${clerkToken}`);
-          console.log("Headers: ", headers);
           return fetch(url, {
             ...options,
             headers,
