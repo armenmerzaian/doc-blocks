@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
-import { useCreateSupabaseClientCsr } from "@/app/lib/database/createSupabaseClientCsr";
+import { useEffect, useCallback } from 'react';
+import subscriptionManager from '@/app/lib/supabaseSubscriptionManager';
+import Emitter from '@/app/lib/emitter';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 type PostgresChanges = {
@@ -15,34 +16,28 @@ interface EventHandlers {
 }
 
 export function useSupabaseSubscription(table: string) {
-  const supabaseClient = useCreateSupabaseClientCsr();
+  useEffect(() => {
+    subscriptionManager.subscribeToTable(table);
+    return () => {
+      subscriptionManager.unsubscribeFromTable(table);
+    };
+  }, [table]);
 
   const subscribeToChanges = useCallback((handlers: EventHandlers) => {
-    const channel = supabaseClient
-      .channel("schema-db-changes")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: table },
-        (payload) => handlers.onInsert && handlers.onInsert(payload)
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: table },
-        (payload) => handlers.onUpdate && handlers.onUpdate(payload)
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: table },
-        (payload) => handlers.onDelete && handlers.onDelete(payload)
-      )
-      .subscribe((status) => {
-        console.log(`Subscription status for ${table}:`, status);
-      });
+    const insertHandler = (payload: RealtimePostgresChangesPayload<PostgresChanges>) => handlers.onInsert && handlers.onInsert(payload);
+    const updateHandler = (payload: RealtimePostgresChangesPayload<PostgresChanges>) => handlers.onUpdate && handlers.onUpdate(payload);
+    const deleteHandler = (payload: RealtimePostgresChangesPayload<PostgresChanges>) => handlers.onDelete && handlers.onDelete(payload);
+
+    Emitter.on(`${table}:INSERT`, insertHandler);
+    Emitter.on(`${table}:UPDATE`, updateHandler);
+    Emitter.on(`${table}:DELETE`, deleteHandler);
 
     return () => {
-      supabaseClient.removeChannel(channel);
+      Emitter.off(`${table}:INSERT`, insertHandler);
+      Emitter.off(`${table}:UPDATE`, updateHandler);
+      Emitter.off(`${table}:DELETE`, deleteHandler);
     };
-  }, [table, supabaseClient]);
+  }, [table]);
 
   return { subscribeToChanges };
 }

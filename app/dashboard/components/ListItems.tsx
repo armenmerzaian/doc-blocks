@@ -20,57 +20,45 @@ export const ListItems: React.FC = () => {
   useEffect(() => {
     if (!user) return;
 
-    Emitter.on(
-      "deleteClick",
-      ({
-        eventData,
-        elemId,
-      }: {
-        eventData: React.MouseEvent<HTMLButtonElement>;
-        elemId: string;
-      }) => {
-        console.log("delete click received", elemId);
-        console.log(eventData);
-        deleteItem(elemId);
-      }
-    );
-
-    const deleteItem = async (id: string) => {
+    
+    Emitter.on("deleteClick", async ({ elemId }) => {
+      console.log("delete click received", elemId);
       try {
-        await deleteRowFromDB(id, "item");
-        setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+        await deleteRowFromDB(elemId, "item");
+        // The actual removal of the item from the state will be handled by the onDelete handler
       } catch (error) {
         console.error("Error deleting item:", error);
-        throw new Error("Error deleting item.")
+        alert("Error deleting item.");
       }
-    };
+    });
 
     const fetchItems = async () => {
       try {
         const fetchedItems = await getAllRowsFromDB("item");
         setItems(
-          fetchedItems.map((item) => {
-            return {
-              id: item.id,
-              label: item.name,
-            };
-          })
+          fetchedItems.map((item) => ({
+            id: item.id,
+            label: item.name,
+          }))
         );
       } catch (error) {
         console.error("Error fetching items:", error);
-        throw new Error("Error deleting item.")
+        alert("Error fetching items.");
       }
     };
 
     fetchItems();
 
-    const handlers = {
+    const unsubscribe = subscribeToChanges({
       onInsert: (
         payload: RealtimePostgresChangesPayload<{ [key: string]: any }>
       ) => {
         console.info("Insert Payload: ", payload);
-        //@ts-expect-error Type is not fully defined in the payload
-        setItems((prevItems) => [...prevItems, {id: payload.new.id, label: payload.new.name}]);
+        setItems((prevItems) => [
+          ...prevItems,
+          //@ts-expect-error Type is not fully defined in the payload
+          { id: payload.new.id, label: payload.new.name },
+        ]);
       },
       onUpdate: (
         payload: RealtimePostgresChangesPayload<{ [key: string]: any }>
@@ -79,7 +67,10 @@ export const ListItems: React.FC = () => {
         setItems((prevItems) =>
           prevItems.map((item) =>
             //@ts-expect-error Type is not fully defined in the payload
-            item === payload.old.name ? payload.new.name : item
+            item.id === payload.new.id
+              ? //@ts-expect-error Type is not fully defined in the payload
+                { ...item, label: payload.new.name }
+              : item
           )
         );
       },
@@ -89,15 +80,13 @@ export const ListItems: React.FC = () => {
         console.info("Delete Payload: ", payload);
         setItems((prevItems) =>
           //@ts-expect-error Type is not fully defined in the payload
-          prevItems.filter((item) => item !== payload.old.name)
+          prevItems.filter((item) => item.id !== payload.old.id)
         );
       },
-    };
-
-    const unsubscribeRealtime = subscribeToChanges(handlers);
+    });
 
     return () => {
-      unsubscribeRealtime();
+      unsubscribe();
       Emitter.off("deleteClick", ()=>{});
     };
   }, [user, subscribeToChanges]);
@@ -109,7 +98,7 @@ export const ListItems: React.FC = () => {
   return (
     <ScrollArea className="h-[500px] w-full max-w-[400px] border rounded-md shadow p-4">
       <div className="p-4">
-        {items.map(({ id, label }: { id: string; label: string }) => (
+        {items.map(({ id, label }) => (
           <div key={id}>
             <ListItem id={id} label={label} className="text-sm" />
             <Separator className="my-2" />

@@ -74,31 +74,25 @@ export const EditItemForm = () => {
         }
 
 
-        const handlers = {
-          onInsert: (
-            payload: RealtimePostgresChangesPayload<{ [key: string]: any }>
-          ) => {
+        const unsubscribe = subscribeToChanges({
+          onInsert: (payload) => {
             console.info("Insert Payload: ", payload);
           },
-          onUpdate: (
-            payload: RealtimePostgresChangesPayload<{ [key: string]: any }>
-          ) => {
+          onUpdate: (payload) => {
             console.info("Update Payload: ", payload);
-            //@ts-expect-error
+            //@ts-expect-error Type is not fully defined in the payload
             if (payload.new.id === currentItem?.id) {
               setCurrentItem({
-                //@ts-expect-error
+                //@ts-expect-error Type is not fully defined in the payload
                 id: payload.new.id,
-                //@ts-expect-error
+                //@ts-expect-error Type is not fully defined in the payload
                 label: payload.new.name,
               });
             }
           },
-          onDelete: (
-            payload: RealtimePostgresChangesPayload<{ [key: string]: any }>
-          ) => {
+          onDelete: (payload) => {
             console.info("Delete Payload: ", payload);
-            //@ts-expect-error
+            //@ts-expect-error Type is not fully defined in the payload
             if (payload.old.id === currentItem?.id) {
               setCurrentItem(undefined);
               form.reset({
@@ -107,16 +101,14 @@ export const EditItemForm = () => {
               });
             }
           },
-        };
-
-        const unsubscribeRealtime = subscribeToChanges(handlers);
+        });
 
         return () => {
-            unsubscribeRealtime();
+            unsubscribe();
             Emitter.off("selectClick", ()=>{});
         };
 
-    }, [user, currentItem, form]);
+    }, [user, currentItem, form, subscribeToChanges]);
 
     const onSubmit = (data: any) => {
         console.log(data);
