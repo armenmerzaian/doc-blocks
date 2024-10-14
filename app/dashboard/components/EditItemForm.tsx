@@ -5,7 +5,7 @@ import Emitter from "@/app/lib/emitter";
 import { useUser } from "@clerk/nextjs";
 import { UserResource } from "@clerk/types";
 import { useSupabaseSubscription } from '@/app/hooks/useSupabaseSubscription';
-import { getRowFromDB } from '@/app/lib/database/actions';
+import { getRowFromDB, updateRowInDB } from '@/app/lib/database/actions';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { useForm } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
@@ -110,9 +110,15 @@ export const EditItemForm = () => {
 
     }, [user, currentItem, form, subscribeToChanges]);
 
-    const onSubmit = (data: any) => {
+    const onSubmitUpdate = async (data: any) => {
         console.log(data);
-        alert("Item updated");
+        
+        try{
+          await updateRowInDB(data.id, data.label, "item");
+        }catch(error){
+          console.error("Error updating item:", error);
+          alert("Error updating item.");
+        }
     };
     
 
@@ -120,7 +126,7 @@ export const EditItemForm = () => {
     <div>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmitUpdate)}
           className="space-y-8 p-5 w-full max-w-[400px] border rounded-md shadow"
         >
           <FormField
@@ -155,7 +161,7 @@ export const EditItemForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Update Item</Button>
+          <Button type="submit" disabled={!currentItem}>Update Item</Button>
         </form>
       </Form>
     </div>
