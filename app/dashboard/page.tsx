@@ -3,6 +3,7 @@ import AddItemForm from "./components/AddItemForm";
 import { ListItems } from "./components/ListItems";
 import { EditItemForm } from "./components/EditItemForm";
 import { NAV_BAR_HEIGHT } from "../lib/constants/constants";
+import Editor from "@/app/dashboard/components/Editor";
 
 const DashboardPage = () => {
 
@@ -14,6 +15,7 @@ const DashboardPage = () => {
           <AddItemForm />
           <EditItemForm />
         </div>
+          <Editor />
       </div>
     </main>
   );

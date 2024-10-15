@@ -92,7 +92,11 @@ export const ListItems: React.FC = () => {
   }, [user, subscribeToChanges]);
 
   if (!items || items.length === 0) {
-    return <div>No items found.</div>;
+    return (
+        <div className="h-[500px] w-full max-w-[400px] flex items-center justify-center border rounded-md shadow p-4">
+          <p className="">Loading...</p>
+        </div>
+    );
   }
 
   return (
