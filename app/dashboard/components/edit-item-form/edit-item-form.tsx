@@ -6,7 +6,6 @@ import { useUser } from "@clerk/nextjs";
 import { UserResource } from "@clerk/types";
 import { useSupabaseSubscription } from '@/app/hooks/useSupabaseSubscription';
 import { getRowFromDB, updateRowInDB } from '@/app/lib/database/actions';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { useForm } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
 import {

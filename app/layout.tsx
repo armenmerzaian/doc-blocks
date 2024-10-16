@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import TopHeader from "./components/TopHeader";
+import TopHeader from "./components/navbar/top-header";
 
 export const metadata: Metadata = {
   title: "Collections",

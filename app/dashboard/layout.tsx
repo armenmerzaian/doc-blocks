@@ -1,5 +1,5 @@
 import React from 'react';
-import LeftMenu from '@/app/components/LeftMenu';
+import LeftMenu from '@/app/components/sidebar/left-menu';
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 

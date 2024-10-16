@@ -9,7 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import { UserResource } from "@clerk/types";
 import { useSupabaseSubscription } from "@/app/hooks/useSupabaseSubscription";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-import ListItem from "@/app/components/ListItem";
+import ListItem from "@/app/components/list-item";
 import Emitter from "@/app/lib/emitter";
 
 export const ListItems: React.FC = () => {

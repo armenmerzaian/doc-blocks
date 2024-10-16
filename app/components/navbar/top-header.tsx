@@ -3,7 +3,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
-import { NavMenuButton } from "./NavMenuButton";
+import { NavMenuButton } from "./nav-menu-button";
 import { NAV_BAR_HEIGHT } from "@/app/lib/constants/constants";
 
 
