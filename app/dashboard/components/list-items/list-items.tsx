@@ -4,24 +4,24 @@ import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
-import { deleteRowFromDB, getAllRowsFromDB } from "@/app/lib/database/actions";
+import { deleteRowFromDB, getAllRowsFromDB } from "@/lib/database/actions";
 import { useUser } from "@clerk/nextjs";
 import { UserResource } from "@clerk/types";
-import { useSupabaseSubscription } from "@/app/hooks/useSupabaseSubscription";
+import { useSupabaseSubscription } from "@/hooks/useSupabaseSubscription";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-import ListItem from "@/app/components/list-item";
-import Emitter from "@/app/lib/emitter";
+import ListItem from "@/components/ui/list-item";
+import { useEventStore } from '@/stores/event-store';
 
 export const ListItems: React.FC = () => {
   const { user } = useUser() as { user: UserResource };
   const [items, setItems] = useState<Array<{ id: string; label: string }>>([]);
   const { subscribeToChanges } = useSupabaseSubscription("item");
+  const { on, off } = useEventStore();
 
   useEffect(() => {
     if (!user) return;
 
-    
-    Emitter.on("deleteClick", async ({ elemId }) => {
+    const handleDeleteClick = async ({ elemId }: { elemId: string }) => {
       console.log("delete click received", elemId);
       try {
         await deleteRowFromDB(elemId, "item");
@@ -30,7 +30,9 @@ export const ListItems: React.FC = () => {
         console.error("Error deleting item:", error);
         alert("Error deleting item.");
       }
-    });
+    };
+
+    on("deleteClick", handleDeleteClick);
 
     const fetchItems = async () => {
       try {
@@ -87,9 +89,9 @@ export const ListItems: React.FC = () => {
 
     return () => {
       unsubscribe();
-      Emitter.off("deleteClick", ()=>{});
+      off("deleteClick", handleDeleteClick);
     };
-  }, [user, subscribeToChanges]);
+  }, [user, subscribeToChanges, on, off]);
 
   if (!items || items.length === 0) {
     return (

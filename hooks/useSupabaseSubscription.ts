@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
-import subscriptionManager from '@/app/lib/supabaseSubscriptionManager';
-import Emitter from '@/app/lib/emitter';
+import subscriptionManager from '@/lib/supabaseSubscriptionManager';
+import { useEventStore } from '@/stores/event-store';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 type PostgresChanges = {
@@ -16,6 +16,8 @@ interface EventHandlers {
 }
 
 export function useSupabaseSubscription(table: string) {
+  const { on, off } = useEventStore();
+
   useEffect(() => {
     subscriptionManager.subscribeToTable(table);
     return () => {
@@ -28,16 +30,16 @@ export function useSupabaseSubscription(table: string) {
     const updateHandler = (payload: RealtimePostgresChangesPayload<PostgresChanges>) => handlers.onUpdate && handlers.onUpdate(payload);
     const deleteHandler = (payload: RealtimePostgresChangesPayload<PostgresChanges>) => handlers.onDelete && handlers.onDelete(payload);
 
-    Emitter.on(`${table}:INSERT`, insertHandler);
-    Emitter.on(`${table}:UPDATE`, updateHandler);
-    Emitter.on(`${table}:DELETE`, deleteHandler);
+    on(`${table}:INSERT`, insertHandler);
+    on(`${table}:UPDATE`, updateHandler);
+    on(`${table}:DELETE`, deleteHandler);
 
     return () => {
-      Emitter.off(`${table}:INSERT`, insertHandler);
-      Emitter.off(`${table}:UPDATE`, updateHandler);
-      Emitter.off(`${table}:DELETE`, deleteHandler);
+      off(`${table}:INSERT`, insertHandler);
+      off(`${table}:UPDATE`, updateHandler);
+      off(`${table}:DELETE`, deleteHandler);
     };
-  }, [table]);
+  }, [table, on, off]);
 
   return { subscribeToChanges };
 }

@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import Emitter from "./emitter";
+import { useEventStore } from '@/stores/event-store';
 
 class SupabaseSubscriptionManager {
   private supabase: ReturnType<typeof createClient>;
@@ -14,13 +14,15 @@ class SupabaseSubscriptionManager {
       return;
     }
 
+    const { emit } = useEventStore.getState();
+
     const channel = this.supabase
       .channel(`${table}-changes`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: table },
         (payload) => {
-          Emitter.emit(`${table}:${payload.eventType}`, payload);
+          emit(`${table}:${payload.eventType}`, payload);
         }
       )
       .subscribe();

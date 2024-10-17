@@ -3,8 +3,8 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
-import { NavMenuButton } from "./nav-menu-button";
-import { NAV_BAR_HEIGHT } from "@/app/lib/constants/constants";
+import { NavMenuButton } from "@/components/layout/nav-menu-button";
+import { NAV_BAR_HEIGHT } from "@/lib/constants/constants";
 
 
 const TopHeader: React.FC = async () => {

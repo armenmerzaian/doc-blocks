@@ -2,7 +2,7 @@ import React from "react";
 import AddItemForm from "./components/add-item-form/add-item-form";
 import { ListItems } from "./components/list-items/list-items";
 import { EditItemForm } from "./components/edit-item-form/edit-item-form";
-import { NAV_BAR_HEIGHT } from "../lib/constants/constants";
+import { NAV_BAR_HEIGHT } from "../../lib/constants/constants";
 
 const DashboardPage = () => {
 

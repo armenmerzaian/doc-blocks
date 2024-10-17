@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from 'react'
-import Emitter from "@/app/lib/emitter";
 import { useUser } from "@clerk/nextjs";
 import { UserResource } from "@clerk/types";
-import { useSupabaseSubscription } from '@/app/hooks/useSupabaseSubscription';
-import { getRowFromDB, updateRowInDB } from '@/app/lib/database/actions';
+import { useSupabaseSubscription } from '@/hooks/useSupabaseSubscription';
+import { getRowFromDB, updateRowInDB } from '@/lib/database/actions';
 import { useForm } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
 import {
@@ -18,11 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useEventStore } from '@/stores/event-store'; // Add this import
 
 export const EditItemForm = () => {
     const { user } = useUser() as { user: UserResource };
     const [currentItem, setCurrentItem] = useState<{ id: string; label: string }>();
     const { subscribeToChanges } = useSupabaseSubscription("item");
+    const { on, off } = useEventStore(); // Add this line
     const form = useForm({
       defaultValues: {
         label: currentItem?.label || "",
@@ -44,12 +45,9 @@ export const EditItemForm = () => {
     };
 
     useEffect(() => {
-
         if (!user) return;
 
-        Emitter.on(
-          "selectClick",
-          ({
+        const handleSelectClick = ({
             eventData,
             elemId,
           }: {
@@ -62,8 +60,9 @@ export const EditItemForm = () => {
             if(!currentItem || currentItem.id !== elemId){
                 fetchItem(elemId);
             }
-          }
-        );
+          };
+
+        on("selectClick", handleSelectClick); // Replace Emitter.on with this
 
         if (currentItem) {
           form.reset({
@@ -71,7 +70,6 @@ export const EditItemForm = () => {
             id: currentItem.id,
           });
         }
-
 
         const unsubscribe = subscribeToChanges({
           onInsert: (payload) => {
@@ -104,10 +102,10 @@ export const EditItemForm = () => {
 
         return () => {
             unsubscribe();
-            Emitter.off("selectClick", ()=>{});
+            off("selectClick", handleSelectClick); // Replace Emitter.off with this
         };
 
-    }, [user, currentItem, form, subscribeToChanges]);
+    }, [user, currentItem, form, subscribeToChanges, on, off]); // Add on and off to the dependency array
 
     const onSubmitUpdate = async (data: any) => {
         console.log(data);

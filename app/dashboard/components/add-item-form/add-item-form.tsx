@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { addRowToDB } from "@/app/lib/database/actions";
+import { addRowToDB } from "@/lib/database/actions";
 
 import { Button } from "@/components/ui/button";
 import {
