@@ -1,3 +1,10 @@
+/**
+ * @file useSupabaseSubscription.ts
+ * @description This file contains the useSupabaseSubscription hook, which is used to subscribe to Supabase real-time changes for a specific table.
+ * It utilizes the event store and subscription manager to handle database changes.
+ * @module useSupabaseSubscription
+ */
+
 import { useEffect, useCallback } from 'react';
 import subscriptionManager from '@/lib/supabaseSubscriptionManager';
 import { useEventStore } from '@/stores/event-store';
@@ -15,6 +22,24 @@ interface EventHandlers {
   onDelete?: EventHandler;
 }
 
+/**
+ * A custom React hook for subscribing to Supabase real-time changes for a specific table.
+ * This hook follows the principle of separation of concerns by delegating the subscription
+ * management to a separate manager and using an event store for communication.
+ * @function useSupabaseSubscription
+ * @param {string} table - The name of the table to subscribe to.
+ * @returns {Object} An object containing the subscribeToChanges function.
+ * @example
+ * const { subscribeToChanges } = useSupabaseSubscription('users');
+ * useEffect(() => {
+ * const unsubscribe = subscribeToChanges({
+ * onInsert: (payload) => console.log('Insert:', payload),
+ * onUpdate: (payload) => console.log('Update:', payload),
+ * onDelete: (payload) => console.log('Delete:', payload),
+ * });
+ * return unsubscribe;
+ * }, []);
+ */
 export function useSupabaseSubscription(table: string) {
   const { on, off } = useEventStore();
 
