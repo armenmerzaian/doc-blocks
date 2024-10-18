@@ -1,8 +1,9 @@
 import React from "react";
-import AddItemForm from "./components/add-item-form/add-item-form";
-import { ListItems } from "./components/list-items/list-items";
-import { EditItemForm } from "./components/edit-item-form/edit-item-form";
-import { NAV_BAR_HEIGHT } from "../../lib/constants/constants";
+import AddItemForm from "@/app/dashboard/components/add-item-form/add-item-form";
+import { ListItems } from "@/app/dashboard/components/list-items/list-items";
+import { EditItemForm } from "@/app/dashboard/components/edit-item-form/edit-item-form";
+import { NAV_BAR_HEIGHT } from "@/lib/constants/constants";
+import EditorWidget from "@/app/dashboard/components/editor-widget/editor-widget";
 
 const DashboardPage = () => {
 
@@ -19,6 +20,7 @@ const DashboardPage = () => {
         <div className="space-y-4">
           <AddItemForm />
           <EditItemForm />
+          <EditorWidget />
         </div>
       </div>
     </main>
