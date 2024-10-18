@@ -6,7 +6,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <div className="flex">
+    <div className="flex dark:bg-black">
       <LeftMenu />
       <main className="w-full">{children}</main>
     </div>

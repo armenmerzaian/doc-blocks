@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import TopHeader from "@/components/layout/top-header";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Collections",
-  description: "Collections Management by Armen",
+  title: "Dock Blocks",
+  description: "Dock Blocks by Armen Merzaian",
 };
 
 export default function RootLayout({
@@ -17,8 +18,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
           <TopHeader />
-          {children}
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
