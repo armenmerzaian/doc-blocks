@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body>
           <ThemeProvider
             attribute="class"
@@ -24,7 +24,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-          <TopHeader />
+            <TopHeader />
             {children}
           </ThemeProvider>
         </body>
