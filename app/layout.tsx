@@ -5,8 +5,8 @@ import TopHeader from "@/components/layout/top-header";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Dock Blocks",
-  description: "Dock Blocks by Armen Merzaian",
+  title: "Doc Blocks",
+  description: "Doc Blocks by Armen Merzaian",
 };
 
 export default function RootLayout({
